@@ -50,7 +50,7 @@
                     </th>
                   </tr>
                 </thead>
-                <tbody class="bg-[#9CB770]"> <!-- Custom olive/green color -->
+                <tbody class="bg-[#9CB770]">
                   <tr>
                     <td class="border-2 border-black p-4 px-6 text-gray-800">
                       <div class="flex justify-between items-center">
@@ -82,24 +82,19 @@
 
         <!-- DELIVERED TAB -->
         <div id="content-delivered" class="tab-content hidden">
-            <!-- Colored Banner KPIs (Connected blocks) -->
             <div class="flex flex-col md:flex-row shadow-lg rounded-xl overflow-hidden mb-8">
-                <!-- Total Titles Delivered (Green) -->
                 <div class="flex-1 bg-green-600 text-white p-6 flex flex-col justify-center items-center">
                     <span class="text-green-100 text-sm font-semibold uppercase tracking-wider mb-1">Total Titles Delivered</span>
                     <span id="kpi-delivered-total" class="text-4xl font-bold">0</span>
                 </div>
-                <!-- Total Avg. Aging Days (Dark Blue) -->
                 <div class="flex-1 bg-blue-800 text-white p-6 flex flex-col justify-center items-center border-t md:border-t-0 md:border-l border-white/20">
                     <span class="text-blue-200 text-sm font-semibold uppercase tracking-wider mb-1">Total Avg. Aging Days</span>
                     <span id="kpi-delivered-avgtat" class="text-4xl font-bold">0</span>
                 </div>
-                <!-- Total Avg. Aging Days in S200 (Teal) -->
                 <div class="flex-1 bg-teal-500 text-white p-6 flex flex-col justify-center items-center border-t md:border-t-0 md:border-l border-white/20">
                     <span class="text-teal-100 text-sm font-semibold uppercase tracking-wider mb-1">Total Avg. Aging Days in S200</span>
                     <span id="kpi-delivered-s200tat" class="text-4xl font-bold">0</span>
                 </div>
-                <!-- Median Days (Purple) -->
                 <div class="flex-1 bg-purple-600 text-white p-6 flex flex-col justify-center items-center border-t md:border-t-0 md:border-l border-white/20">
                     <span class="text-purple-100 text-sm font-semibold uppercase tracking-wider mb-1">Median Days</span>
                     <span id="kpi-delivered-median" class="text-4xl font-bold">0</span>
@@ -113,7 +108,6 @@
                 </div>
             </div>
 
-            <!-- Month-wise Stage TAT Bar Chart -->
             <div class="bg-white rounded-xl p-6 card-shadow mb-8">
                 <div class="border-b pb-4 mb-4">
                     <h2 class="text-xl font-bold text-gray-800">Average TAT by Production Stage</h2>
@@ -146,7 +140,7 @@
                                 <th class="py-3 px-6 text-left">Book ID</th>
                                 <th class="py-3 px-6 text-left">MPS ID</th>
                                 <th class="py-3 px-6 text-center">Delivered Date</th>
-                                <th class="py-3 px-6 text-center">TS Pages</th>
+                                <th class="py-3 px-6 text-center">MS Pages</th>
                             </tr>
                         </thead>
                         <tbody id="table-body-delivered" class="text-gray-600 text-sm font-light">
@@ -158,9 +152,7 @@
 
         <!-- CURRENT STATUS TAB -->
         <div id="content-status" class="tab-content hidden">
-            <!-- 1. KPIs -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <!-- Total Active Books -->
                 <div class="bg-white rounded-xl p-6 card-shadow border-l-4 border-indigo-500">
                     <h2 class="text-gray-500 text-sm font-semibold uppercase tracking-wider mb-2">Total Active Books</h2>
                     <div class="flex items-center justify-between">
@@ -170,7 +162,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- Total Pages in Pipeline -->
                 <div class="bg-white rounded-xl p-6 card-shadow border-l-4 border-emerald-500">
                     <h2 class="text-gray-500 text-sm font-semibold uppercase tracking-wider mb-2">Total Pages in Pipeline</h2>
                     <div class="flex items-center justify-between">
@@ -180,7 +171,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- Average Current TAT -->
                 <div class="bg-white rounded-xl p-6 card-shadow border-l-4 border-amber-500">
                     <h2 class="text-gray-500 text-sm font-semibold uppercase tracking-wider mb-2">Average Current TAT</h2>
                     <div class="flex items-center justify-between">
@@ -192,16 +182,13 @@
                 </div>
             </div>
 
-            <!-- 2 & 3. Charts -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <!-- Stage-by-Stage TAT Summary Chart -->
                 <div class="bg-white rounded-xl p-6 card-shadow relative">
                     <h2 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Average Work Aging by Stage</h2>
                     <div class="relative h-80 w-full">
                         <canvas id="stageTatBarChart"></canvas>
                     </div>
                 </div>
-                <!-- Items by Stage Chart -->
                 <div class="bg-white rounded-xl p-6 card-shadow relative">
                     <h2 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Title Count by Stage</h2>
                     <div class="relative h-80 w-full">
@@ -210,7 +197,6 @@
                 </div>
             </div>
 
-            <!-- 4. Data Table -->
             <div class="bg-white rounded-xl card-shadow overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center flex-wrap gap-4">
                     <h2 class="text-xl font-bold text-gray-800">Pipeline Details</h2>
@@ -231,7 +217,7 @@
                             <tr class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
                                 <th class="py-3 px-6 text-left">MPS ID</th>
                                 <th class="py-3 px-6 text-center">Stage</th>
-                                <th class="py-3 px-6 text-center">TS Pages</th>
+                                <th class="py-3 px-6 text-center">MS Pages</th>
                                 <th class="py-3 px-6 text-left">Received Date (S50)</th>
                                 <th class="py-3 px-6 text-center">Current TAT</th>
                             </tr>
@@ -242,18 +228,16 @@
                 </div>
             </div>
         </div>
-
     </main>
 
     <script>
         Chart.register(ChartDataLabels);
-        let charts = {}; // Store charts to destroy them before re-rendering
+        let charts = {};
         let globalWipData = [];
         let globalDeliveredData = [];
         let deliveredStageMetrics = {};
         let deliveredAvailableMonths = [];
 
-        // --- Search / Filter Logic ---
         function filterTable(inputId, tbodyId) {
             let input = document.getElementById(inputId);
             let filter = input.value.toLowerCase();
@@ -261,11 +245,8 @@
             let trs = tbody.getElementsByTagName('tr');
             let visibleCount = 0;
 
-            // Remove existing fallback row if any
             let fallbackRow = document.getElementById(tbodyId + '-fallback');
-            if (fallbackRow) {
-                fallbackRow.remove();
-            }
+            if (fallbackRow) fallbackRow.remove();
 
             for (let i = 0; i < trs.length; i++) {
                 let row = trs[i];
@@ -278,7 +259,6 @@
                 }
             }
 
-            // Fallback row if no match
             if (visibleCount === 0 && trs.length > 0) {
                 let colCount = trs[0].children.length || 5;
                 let noMatchRow = document.createElement('tr');
@@ -289,31 +269,21 @@
             }
         }
 
-        // --- Export to CSV Logic ---
         function exportTableToCSV(tableId, filename) {
             let table = document.getElementById(tableId);
             let rows = table.querySelectorAll('tr');
             let csvData = [];
 
             rows.forEach(row => {
-                // Ignore fallback row or hidden rows
                 if (row.style.display === 'none' || row.id.includes('-fallback')) return;
 
                 let rowData = [];
                 let cols = row.querySelectorAll('td, th');
                 cols.forEach(col => {
-                    // Extract text content and clean it up
                     let text = col.innerText || col.textContent;
-                    text = text.replace(/(\r\n|\n|\r)/gm, ' ').trim(); // Remove newlines
-                    
-                    // Escape double quotes
-                    if (text.includes('"')) {
-                        text = text.replace(/"/g, '""');
-                    }
-                    // Quote cells containing commas
-                    if (text.includes(',')) {
-                        text = '"' + text + '"';
-                    }
+                    text = text.replace(/(\r\n|\n|\r)/gm, ' ').trim();
+                    if (text.includes('"')) text = text.replace(/"/g, '""');
+                    if (text.includes(',')) text = '"' + text + '"';
                     rowData.push(text);
                 });
                 csvData.push(rowData.join(','));
@@ -321,8 +291,6 @@
 
             let csvString = csvData.join('\n');
             let blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
-            
-            // Create download link
             let link = document.createElement('a');
             let url = URL.createObjectURL(blob);
             link.setAttribute('href', url);
@@ -333,28 +301,21 @@
             document.body.removeChild(link);
         }
 
-        // --- Tab switching logic ---
-        // Handles highlighting the active tab, hiding inactive content, and triggering data fetch
         function switchTab(tabName) {
-            // Reset all tab buttons to default inactive Tailwind classes
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('active', 'bg-white', 'text-indigo-900', 'border-indigo-600');
                 btn.classList.add('text-indigo-200', 'border-transparent');
             });
             
-            // Apply active Tailwind classes to the clicked tab
             const activeBtn = document.getElementById(`tab-${tabName}`);
             activeBtn.classList.add('active', 'bg-white', 'text-indigo-900', 'border-indigo-600');
             activeBtn.classList.remove('text-indigo-200', 'border-transparent');
 
-            // Hide all tab contents
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.add('hidden');
             });
-            // Show active tab content
             document.getElementById(`content-${tabName}`).classList.remove('hidden');
 
-            // Clear search inputs and reset rows when switching tabs
             document.querySelectorAll('input[type="text"][id^="search-"]').forEach(input => {
                 input.value = '';
             });
@@ -370,7 +331,6 @@
                 }
             });
 
-            // Fetch respective data based on which tab was selected
             if (tabName === 'customer') {
                 fetchSummaryData();
             } else if (tabName === 'delivered') {
@@ -380,10 +340,8 @@
             }
         }
 
-        // --- Fetch Summary Data ---
         async function fetchSummaryData() {
             try {
-                // Fetch both Current Status (WIP) and Delivered sheets concurrently
                 const [wipRes, delRes] = await Promise.all([
                     fetch('/api/data?sheet=' + encodeURIComponent('Current Status')),
                     fetch('/api/data?sheet=' + encodeURIComponent('Delivered'))
@@ -402,7 +360,6 @@
                     return isValidBookId && isValidDate;
                 });
 
-                // 1. Calculate WIP numbers
                 const wipTitles = wipData.length;
                 let wipAgingSum = 0;
                 let wipAgingCount = 0;
@@ -418,7 +375,6 @@
                 });
                 const wipAging = wipAgingCount > 0 ? Math.round(wipAgingSum / wipAgingCount) : 0;
 
-                // 2. Calculate Delivered numbers
                 const delTitles = delData.length;
                 let delAgingSum = 0;
                 let delAgingCount = 0;
@@ -434,7 +390,6 @@
                 });
                 const delAging = delAgingCount > 0 ? Math.round(delAgingSum / delAgingCount) : 0;
 
-                // Inject into HTML elements
                 document.getElementById('summary-wip-titles').textContent = wipTitles;
                 document.getElementById('summary-wip-aging').textContent = wipAging;
                 document.getElementById('summary-del-titles').textContent = delTitles;
@@ -443,26 +398,20 @@
             } catch (error) { showError(error); }
         }
 
-        // --- Fetch Delivered Data ---
         async function fetchDeliveredData() {
             try {
                 const response = await fetch('/api/data?sheet=Delivered');
                 if (!response.ok) throw new Error("API Connection Failed");
                 let data = await response.json();
 
-                // Filter out empty rows (e.g., rows where Book ID or Delivered Date is null, empty, or 'NaN')
                 data = data.filter(row => {
                     let bookId = row['Book ID'];
                     let dDate = row['Delivered Date '] || row['Delivered Date'] || row['Delivery Date'];
-                    
-                    // Check if Book ID and Date exist and are not 'nan'
                     let isValidBookId = bookId && String(bookId).trim() !== '' && String(bookId).toLowerCase() !== 'nan';
                     let isValidDate = dDate && String(dDate).trim() !== '' && String(dDate).toLowerCase() !== 'nan' && String(dDate).toLowerCase() !== 'nat';
-                    
                     return isValidBookId && isValidDate;
                 });
 
-                // Update global data for the table filtering to also use this cleaned data
                 globalDeliveredData = data;
 
                 let totalTatSum = 0;
@@ -472,12 +421,8 @@
                 let allTats = [];
 
                 const STAGES = ['S200', 'S300A', 'S300', 'S600', 'S650A', 'S650'];
-                deliveredStageMetrics = {
-                    'All Months': {}
-                };
-                STAGES.forEach(s => {
-                    deliveredStageMetrics['All Months'][s] = { sum: 0, count: 0 };
-                });
+                deliveredStageMetrics = { 'All Months': {} };
+                STAGES.forEach(s => { deliveredStageMetrics['All Months'][s] = { sum: 0, count: 0 }; });
 
                 let monthsMap = new Map();
 
@@ -498,7 +443,6 @@
                         s200TatCount++;
                     }
 
-                    // Extract stage TAT values grouped by delivery month
                     let dDate = cleanRow['Delivered Date'] || cleanRow['Delivery Date'] || row['Delivered Date '] || row['Delivered Date'] || '';
                     if (dDate) {
                         let parsedDate = new Date(dDate);
@@ -514,9 +458,7 @@
 
                             if (!deliveredStageMetrics[monthLabel]) {
                                 deliveredStageMetrics[monthLabel] = {};
-                                STAGES.forEach(s => {
-                                    deliveredStageMetrics[monthLabel][s] = { sum: 0, count: 0 };
-                                });
+                                STAGES.forEach(s => { deliveredStageMetrics[monthLabel][s] = { sum: 0, count: 0 }; });
                             }
 
                             STAGES.forEach(s => {
@@ -544,7 +486,6 @@
                     }
                 });
 
-                // Sort unique delivery months chronologically
                 let sortedMonths = Array.from(monthsMap.entries())
                     .sort((a, b) => a[1] - b[1])
                     .map(entry => entry[0]);
@@ -569,7 +510,6 @@
                 document.getElementById('kpi-delivered-s200tat').innerHTML = `${avgS200Tat} <span class="text-lg font-medium opacity-80">days</span>`;
                 document.getElementById('kpi-delivered-median').innerHTML = `${medianTat} <span class="text-lg font-medium opacity-80">days</span>`;
 
-                // Fetch pre-calculated chart data
                 const chartResponse = await fetch('/api/data?sheet=Month%20Wise%20Delivery%20Status');
                 const chartData = await chartResponse.json();
 
@@ -579,7 +519,6 @@
                 let countKey = null;
 
                 chartData.forEach(row => {
-                    // Step 1: Scan the row to dynamically discover which JSON keys hold our actual data columns
                     if (!monthKey || !countKey) {
                         for (let key in row) {
                             let cellValue = String(row[key]).trim().toLowerCase();
@@ -589,14 +528,11 @@
                                 countKey = key;
                             }
                         }
-                    } 
-                    // Step 2: Once the correct columns are mapped, extract the data rows
-                    else {
+                    } else {
                         let mVal = row[monthKey];
                         let cVal = row[countKey];
                         
                         let monthStr = String(mVal).trim();
-                        // Ignore empty rows, pandas 'nan', and footer rows
                         if (monthStr && monthStr.toLowerCase() !== 'nan' && monthStr.toLowerCase() !== 'none' && monthStr !== 'null') {
                             let parsedDate = new Date(monthStr);
                             if (!isNaN(parsedDate)) {
@@ -611,8 +547,6 @@
                 });
 
                 let chartAvgAging = [];
-
-                // Match the months and calculate the average aging days from the main Delivered data
                 chartLabels.forEach(monthLabel => {
                     let matchingRows = data.filter(row => {
                         let dDate = row['Delivered Date '] || row['Delivered Date'] || row['Delivery Date'] || '';
@@ -648,7 +582,7 @@
                             {
                                 label: 'Title Count',
                                 data: chartValues,
-                                borderColor: '#f97316', // Orange
+                                borderColor: '#f97316',
                                 backgroundColor: '#f97316',
                                 tension: 0.3,
                                 borderWidth: 3,
@@ -659,7 +593,7 @@
                             {
                                 label: 'Avg. Aging Days',
                                 data: chartAvgAging,
-                                borderColor: '#3b82f6', // Blue
+                                borderColor: '#3b82f6',
                                 backgroundColor: '#3b82f6',
                                 tension: 0.3,
                                 borderWidth: 3,
@@ -679,9 +613,9 @@
                             if (activeElements.length > 0) {
                                 const clickedIndex = activeElements[0].index;
                                 const clickedMonth = deliveredPieChart.data.labels[clickedIndex];
-                                renderDeliveredTable(clickedMonth); // Filter table by clicked month
+                                renderDeliveredTable(clickedMonth);
                             } else {
-                                renderDeliveredTable(null); // Reset table if empty space is clicked
+                                renderDeliveredTable(null);
                             }
                         },
                         scales: {
@@ -699,23 +633,17 @@
                                 position: 'right',
                                 beginAtZero: true,
                                 grace: '20%',
-                                grid: { drawOnChartArea: false }, // Prevent gridline overlap
+                                grid: { drawOnChartArea: false },
                                 title: { display: true, text: 'Avg Aging Days', color: '#3b82f6', font: { weight: 'bold' } }
                             }
                         },
                         plugins: {
-                            legend: {
-                                display: true,
-                                position: 'top'
-                            },
+                            legend: { display: true, position: 'top' },
                             datalabels: {
                                 align: 'top',
                                 anchor: 'end',
                                 font: { weight: 'bold' },
-                                color: function(context) {
-                                    // Orange for Title Count, Blue for Avg Aging Days
-                                    return context.datasetIndex === 0 ? '#ea580c' : '#2563eb';
-                                }
+                                color: function(context) { return context.datasetIndex === 0 ? '#ea580c' : '#2563eb'; }
                             }
                         }
                     }
@@ -727,9 +655,6 @@
             } catch (error) { showError(error); }
         }
 
-        // --- Fetch Current Status Data ---
-        // Fetches data focusing on columns C to O from the 'Current Status' sheet.
-        // Builds rich KPIs, Stage-by-Stage TAT charts, and detailed data tables.
         async function fetchStatusData() {
             try {
                 const response = await fetch('/api/data?sheet=' + encodeURIComponent('Current Status'));
@@ -740,401 +665,11 @@
                 let totalPages = 0;
                 let currentTatSum = 0;
                 let currentTatCount = 0;
-
                 let stageCounts = {};
-                
-                // Keep track of TAT sum and count for each critical stage
                 let stageTatMetrics = {
                     'S200': { sum: 0, count: 0 },
                     'S300A': { sum: 0, count: 0 },
                     'S300': { sum: 0, count: 0 },
                     'S600': { sum: 0, count: 0 },
                     'S650A': { sum: 0, count: 0 },
-                    'S650': { sum: 0, count: 0 }
-                };
-
-                data.forEach(row => {
-                    let cleanRow = {};
-                    // Cleans up extra spaces in headers to ensure exact matching
-                    for(let key in row) cleanRow[key.trim().replace(/\s+/g, ' ')] = row[key];
-
-                    let stage = cleanRow['Stage'] || cleanRow['Current Stage'] || 'Unknown';
-                    
-                    // Look for the pages column specifically (checking TS Pages, MS Pages, Pages, etc.)
-                    let pages = cleanRow['TS Pages'] || cleanRow['MS Pages'] || cleanRow['TS PAGES'] || cleanRow['MS PAGES'] || cleanRow['Pages'] || cleanRow['TS pages'] || cleanRow['MS pages'] || cleanRow['Estimated TS Pages'] || row['TS Pages'] || row['MS Pages'] || 0;
-                    if (!pages) {
-                        for (let k in cleanRow) {
-                            if (k.toLowerCase().includes('page')) {
-                                pages = cleanRow[k];
-                                if (pages) break;
-                            }
-                        }
-                    }
-                    totalPages += Math.round(Number(pages) || 0);
-
-                    // Parse Current TAT for the Average Current TAT KPI
-                    let cTat = parseFloat(cleanRow['Current TAT (S50 onward)'] || cleanRow['Current TAT']);
-                    if (!isNaN(cTat)) {
-                        currentTatSum += cTat;
-                        currentTatCount++;
-                    }
-
-                    // Increment the counter for this specific stage (for horizontal bar chart)
-                    stageCounts[stage] = (stageCounts[stage] || 0) + 1;
-
-                    // Parse TAT metrics for each stage dynamically for the vertical bar chart
-                    const stages = ['S200', 'S300A', 'S300', 'S600', 'S650A', 'S650'];
-                    stages.forEach(s => {
-                        // The column headers match the pattern: 'S200 TAT', 'S300A TAT', etc.
-                        let val = parseFloat(cleanRow[`${s} TAT`]);
-                        if (!isNaN(val)) {
-                            stageTatMetrics[s].sum += val;
-                            stageTatMetrics[s].count++;
-                        }
-                    });
-                });
-
-                // --- Calculate KPI Values ---
-                let avgCurrentTat = currentTatCount > 0 ? Math.round(currentTatSum / currentTatCount) : 0;
-                document.getElementById('kpi-status-total').textContent = data.length;
-                document.getElementById('kpi-status-pages').textContent = totalPages.toLocaleString(); // Commas for large numbers
-                document.getElementById('kpi-status-avgtat').innerHTML = `${avgCurrentTat} <span class="text-lg font-medium opacity-80">days</span>`;
-
-                // --- Chart 1: Average TAT by Production Stage (Vertical Bar) ---
-                let stageLabels = ['S200', 'S300A', 'S300', 'S600', 'S650A', 'S650'];
-                let avgTatData = stageLabels.map(s => {
-                    return stageTatMetrics[s].count > 0 ? Math.round(stageTatMetrics[s].sum / stageTatMetrics[s].count) : 0;
-                });
-
-                if (charts['stageTatBarChart']) charts['stageTatBarChart'].destroy();
-                charts['stageTatBarChart'] = new Chart(document.getElementById('stageTatBarChart').getContext('2d'), {
-                    type: 'bar',
-                    data: {
-                        labels: stageLabels,
-                        datasets: [{
-                            label: 'Average TAT (Days)',
-                            data: avgTatData,
-                            backgroundColor: ['#6366f1', '#8b5cf6', '#ec4899', '#f43f5e', '#f97316', '#eab308'],
-                            borderRadius: 4
-                        }]
-                    },
-                    options: { 
-                        responsive: true, 
-                        maintainAspectRatio: false, 
-                        layout: { padding: { top: 30 } },
-                        plugins: { 
-                            legend: { display: false },
-                            datalabels: {
-                                anchor: 'end',
-                                align: 'end',
-                                offset: 4,
-                                font: { weight: 'bold' }
-                            }
-                        }, 
-                        scales: { y: { beginAtZero: true, title: { display: true, text: 'Avg Days' } } } 
-                    }
-                });
-
-                // --- Chart 2: Title Count by Stage (Horizontal Bar) ---
-                if (charts['statusBarChart']) charts['statusBarChart'].destroy();
-                let titleCountBarChart;
-                let statusBarChart = titleCountBarChart = charts['statusBarChart'] = new Chart(document.getElementById('statusBarChart').getContext('2d'), {
-                    type: 'bar',
-                    data: {
-                        labels: Object.keys(stageCounts),
-                        datasets: [{
-                            label: 'Active Items',
-                            data: Object.values(stageCounts),
-                            backgroundColor: '#3b82f6',
-                            borderRadius: 4
-                        }]
-                    },
-                    options: { 
-                        indexAxis: 'y', 
-                        responsive: true, 
-                        maintainAspectRatio: false, 
-                        onHover: (event, chartElement) => {
-                            event.native.target.style.cursor = chartElement[0] ? 'pointer' : 'default';
-                        },
-                        onClick: (event, activeElements) => {
-                            if (activeElements.length > 0) {
-                                const clickedIndex = activeElements[0].index;
-                                const clickedStage = statusBarChart.data.labels[clickedIndex];
-                                renderWIPTable(clickedStage); // Filter table by clicked stage
-                            } else {
-                                renderWIPTable(null); // Reset table if empty space is clicked
-                            }
-                        },
-                        plugins: { 
-                            legend: { display: false },
-                            datalabels: {
-                                anchor: 'end',
-                                align: 'start',
-                                color: '#ffffff',
-                                font: { weight: 'bold' },
-                                offset: 4
-                            }
-                        }, 
-                        scales: { x: { beginAtZero: true, title: { display: true, text: 'Title count' } } } 
-                    }
-                });
-
-                renderWIPTable(null);
-
-            } catch (error) { showError(error); }
-        }
-
-        // --- Render WIP Pipeline Table with Dynamic Stage Filter and TAT Column ---
-        function renderWIPTable(filterStage) {
-            const tbody = document.getElementById('table-body-status');
-            const table = tbody.closest('table');
-            const thead = table.querySelector('thead');
-            
-            // 1. Filter Data
-            let displayData = globalWipData;
-            let extraColHeader = '';
-            
-            if (filterStage) {
-                displayData = globalWipData.filter(row => {
-                    const stage = row['Stage'] || row['Current Stage'] || '';
-                    return stage.trim() === filterStage.trim();
-                });
-                // Add the specific Stage TAT header
-                extraColHeader = `<th class="py-3 px-6 text-center bg-indigo-50 text-indigo-700 rounded-tr-lg">${filterStage} TAT</th>`;
-            }
-
-            // 2. Dynamically Rebuild Header
-            thead.innerHTML = `
-                <tr class="bg-gray-100 text-gray-600 uppercase text-xs leading-normal">
-                    <th class="py-3 px-6 text-left">Book ID</th>
-                    <th class="py-3 px-6 text-left">MPS ID</th>
-                    <th class="py-3 px-6 text-center">Stage</th>
-                    <th class="py-3 px-6 text-center">TS Pages</th>
-                    <th class="py-3 px-6 text-center">Received Date</th>
-                    <th class="py-3 px-6 text-center">Current TAT</th>
-                    ${extraColHeader}
-                </tr>
-            `;
-
-            // 3. Populate Rows
-            tbody.innerHTML = '';
-            
-            if (displayData.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="py-4 text-center text-gray-500 italic">No records found.</td></tr>`;
-                return;
-            }
-
-            displayData.forEach(row => {
-                let cleanRow = {};
-                for (let key in row) cleanRow[key.trim().replace(/\s+/g, ' ')] = row[key];
-
-                let bookId = cleanRow['Book ID'] || row['Book ID'] || '-';
-                let mpsId = cleanRow['MPS ID'] || row['MPS ID'] || '-';
-                let stage = cleanRow['Stage'] || row['Stage'] || cleanRow['Current Stage'] || row['Current Stage'] || 'Unknown';
-                let tsPages = cleanRow['TS Pages'] || cleanRow['MS Pages'] || cleanRow['TS PAGES'] || cleanRow['MS PAGES'] || cleanRow['Pages'] || cleanRow['TS pages'] || cleanRow['MS pages'] || cleanRow['Estimated TS Pages'] || row['TS Pages'] || row['MS Pages'] || '-';
-                
-                let receivedDate = cleanRow['Received Date (S50)'] || row['Received Date (S50)'] || cleanRow['Received Date'] || row['Received Date'] || '-';
-                if(receivedDate !== '-' && !isNaN(Date.parse(receivedDate))) {
-                     receivedDate = new Date(receivedDate).toISOString().split('T')[0];
-                }
-                
-                let currentTat = cleanRow['Current TAT (S50 onward)'] || row['Current TAT (S50 onward)'] || cleanRow['Current TAT'] || row['Current TAT'] || '0';
-                
-                let extraColHTML = '';
-                if (filterStage) {
-                    let stageTatKey = `${filterStage} TAT`;
-                    let specificTatValue = cleanRow[stageTatKey] !== undefined ? cleanRow[stageTatKey] : row[stageTatKey]; 
-                    
-                    // Strictly parse it. If it's undefined, null, empty string, or 'nan', default to 0
-                    let specificTat = (specificTatValue !== undefined && specificTatValue !== null && String(specificTatValue).trim() !== '' && String(specificTatValue).toLowerCase() !== 'nan' && String(specificTatValue).toLowerCase() !== 'none') ? Math.round(Number(specificTatValue) || 0) : 0;
-                    
-                    extraColHTML = `<td class="py-3 px-6 text-center font-bold text-indigo-700 bg-indigo-50/30">${specificTat}</td>`;
-                }
-
-                let tr = document.createElement('tr');
-                tr.className = 'border-b border-gray-200 hover:bg-gray-50';
-                tr.innerHTML = `
-                    <td class="py-3 px-6 text-left">${bookId}</td>
-                    <td class="py-3 px-6 text-left">${mpsId}</td>
-                    <td class="py-3 px-6 text-center"><span class="bg-indigo-100 text-indigo-800 text-xs font-bold px-3 py-1 rounded-full">${stage}</span></td>
-                    <td class="py-3 px-6 text-center">${tsPages}</td>
-                    <td class="py-3 px-6 text-center text-gray-500">${receivedDate}</td>
-                    <td class="py-3 px-6 text-center font-bold">${currentTat}</td>
-                    ${extraColHTML}
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        // --- Render Delivered Stage TAT Chart with Dynamic Month Filter ---
-        function renderDeliveredStageChart(selectedMonth = 'All Months') {
-            const STAGES = ['S200', 'S300A', 'S300', 'S600', 'S650A', 'S650'];
-            const stageColors = ['#6366f1', '#8b5cf6', '#ec4899', '#f43f5e', '#f97316', '#eab308'];
-
-            // 1. Render / Update Month Filter Buttons
-            const buttonsContainer = document.getElementById('delivered-month-buttons');
-            if (buttonsContainer) {
-                buttonsContainer.innerHTML = '';
-                deliveredAvailableMonths.forEach(month => {
-                    const btn = document.createElement('button');
-                    btn.type = 'button';
-                    const isActive = month === selectedMonth;
-                    btn.className = isActive
-                        ? 'bg-indigo-600 text-white font-semibold shadow-sm px-4 py-1.5 rounded-lg text-sm transition shrink-0'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 font-medium px-4 py-1.5 rounded-lg text-sm border border-gray-200 transition shrink-0';
-                    btn.textContent = month;
-                    btn.onclick = () => renderDeliveredStageChart(month);
-                    buttonsContainer.appendChild(btn);
-                });
-            }
-
-            // 2. Prepare Data for selected month
-            const monthMetrics = deliveredStageMetrics[selectedMonth] || deliveredStageMetrics['All Months'] || {};
-            const chartData = STAGES.map(s => {
-                const metric = monthMetrics[s];
-                return (metric && metric.count > 0) ? Math.round(metric.sum / metric.count) : 0;
-            });
-
-            // 3. Render Bar Chart
-            if (charts['deliveredStageTatChart']) {
-                charts['deliveredStageTatChart'].destroy();
-            }
-            const canvas = document.getElementById('deliveredStageTatChart');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            charts['deliveredStageTatChart'] = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: STAGES,
-                    datasets: [{
-                        label: 'Average TAT (Days)',
-                        data: chartData,
-                        backgroundColor: stageColors,
-                        borderRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    layout: { padding: { top: 30 } },
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return `Average TAT: ${context.parsed.y} days`;
-                                }
-                            }
-                        },
-                        datalabels: {
-                            anchor: 'end',
-                            align: 'end',
-                            offset: 4,
-                            font: { weight: 'bold' },
-                            color: '#4b5563',
-                            formatter: function(value) {
-                                return value > 0 ? value : 0;
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: { display: true, text: 'Avg Days' },
-                            ticks: { precision: 0 }
-                        },
-                        x: {
-                            title: { display: true, text: 'Production Stage' }
-                        }
-                    }
-                }
-            });
-        }
-
-        // --- Render Delivered Items Table with Dynamic Month Filter and Aging Days Column ---
-        function renderDeliveredTable(filterMonth) {
-            const tbody = document.getElementById('table-body-delivered');
-            const table = tbody.closest('table');
-            const thead = table.querySelector('thead');
-            
-            // 1. Filter Data
-            let displayData = globalDeliveredData;
-            let extraColHeader = '';
-            
-            if (filterMonth) {
-                displayData = globalDeliveredData.filter(row => {
-                    let dDate = row['Delivered Date '] || row['Delivered Date'] || row['Delivery Date'] || '';
-                    if (!dDate) return false;
-                    let parsed = new Date(dDate);
-                    if (isNaN(parsed.getTime())) return false;
-                    
-                    let shortMonth = parsed.toLocaleString('en-US', { month: 'short' });
-                    if (shortMonth === 'Jul') shortMonth = 'July';
-                    let shortYear = parsed.getFullYear().toString().slice(-2);
-                    return (shortMonth + shortYear) === filterMonth;
-                });
-                // Add the extra column header for filtered view
-                extraColHeader = `<th class="py-3 px-6 text-center bg-blue-50 text-blue-700 rounded-tr-lg">Total Avg. Aging Days</th>`;
-            }
-
-            // 2. Dynamically Rebuild Header
-            thead.innerHTML = `
-                <tr class="bg-gray-100 text-gray-600 uppercase text-xs leading-normal">
-                    <th class="py-3 px-6 text-left rounded-tl-lg">Book ID</th>
-                    <th class="py-3 px-6 text-left">MPS ID</th>
-                    <th class="py-3 px-6 text-center">Delivered Date</th>
-                    <th class="py-3 px-6 text-center ${filterMonth ? '' : 'rounded-tr-lg'}">TS Pages</th>
-                    ${extraColHeader}
-                </tr>
-            `;
-
-            // 3. Populate Rows
-            tbody.innerHTML = '';
-            
-            if (displayData.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="${filterMonth ? 5 : 4}" class="py-4 text-center text-gray-500 italic">No records found.</td></tr>`;
-                return;
-            }
-
-            displayData.forEach(row => {
-                let bookId = row['Book ID'] || '-';
-                let mpsId = row['MPS ID'] || '-';
-                let tsPages = row['TS Pages'] || row['Estimated TS Pages'] || '-';
-                
-                let dDate = row['Delivered Date '] || row['Delivered Date'] || row['Delivery Date'] || '-';
-                if (dDate !== '-' && !isNaN(Date.parse(dDate))) {
-                     dDate = new Date(dDate).toISOString().split('T')[0];
-                }
-                
-                let extraColHTML = '';
-                if (filterMonth) {
-                    // Pull the specific Total Avg. Aging Days value
-                    let agingDays = row['Total Avg. Aging Days'] || row['Current TAT (S50 onward)'] || '0';
-                    extraColHTML = `<td class="py-3 px-6 text-center font-bold text-blue-700 bg-blue-50/30">${agingDays}</td>`;
-                }
-
-                let tr = document.createElement('tr');
-                tr.className = 'border-b border-gray-200 hover:bg-gray-50';
-                tr.innerHTML = `
-                    <td class="py-3 px-6 text-left whitespace-nowrap">${bookId}</td>
-                    <td class="py-3 px-6 text-left">${mpsId}</td>
-                    <td class="py-3 px-6 text-center text-gray-500">${dDate}</td>
-                    <td class="py-3 px-6 text-center">${tsPages}</td>
-                    ${extraColHTML}
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function showError(error) {
-            const errMsg = document.getElementById('error-msg');
-            errMsg.textContent = "Error: " + error.message + " (Please ensure your Python API is running)";
-            errMsg.classList.remove('hidden');
-            console.error(error);
-        }
-
-        // Initialize Summary tab on load
-        switchTab('customer');
-    </script>
-</body>
-</html>
+                    'S650
