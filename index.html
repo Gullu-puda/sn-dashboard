@@ -231,7 +231,7 @@
                             <tr class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
                                 <th class="py-3 px-6 text-left">MPS ID</th>
                                 <th class="py-3 px-6 text-center">Stage</th>
-                                <th class="py-3 px-6 text-center">MS Pages</th>
+                                <th class="py-3 px-6 text-center">TS Pages</th>
                                 <th class="py-3 px-6 text-left">Received Date (S50)</th>
                                 <th class="py-3 px-6 text-center">Current TAT</th>
                             </tr>
@@ -604,8 +604,12 @@
                                 let shortYear = String(parsedDate.getFullYear()).slice(-2);
                                 monthStr = `${shortMonth}${shortYear}`;
                             }
-                            chartLabels.push(monthStr);
-                            chartValues.push(parseFloat(cVal) || 0);
+                            let countVal = parseFloat(cVal) || 0;
+                            // Only include months on the chart that actually have delivered titles (> 0)
+                            if (countVal > 0) {
+                                chartLabels.push(monthStr);
+                                chartValues.push(countVal);
+                            }
                         }
                     }
                 });
@@ -909,7 +913,7 @@
                     <th class="py-3 px-6 text-left">Book ID</th>
                     <th class="py-3 px-6 text-left">MPS ID</th>
                     <th class="py-3 px-6 text-center">Stage</th>
-                    <th class="py-3 px-6 text-center">MS Pages</th>
+                    <th class="py-3 px-6 text-center">TS Pages</th>
                     <th class="py-3 px-6 text-center">Received Date</th>
                     <th class="py-3 px-6 text-center">Current TAT</th>
                     ${extraColHeader}
