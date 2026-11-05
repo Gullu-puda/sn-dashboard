@@ -676,6 +676,9 @@
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
+                        layout: {
+                            padding: { top: 25, right: 25, bottom: 10, left: 15 }
+                        },
                         onHover: (event, chartElement) => {
                             event.native.target.style.cursor = chartElement[0] ? 'pointer' : 'default';
                         },
@@ -713,11 +716,25 @@
                                 position: 'top'
                             },
                             datalabels: {
-                                align: 'top',
-                                anchor: 'end',
-                                font: { weight: 'bold' },
+                                align: function(context) {
+                                    if (context.datasetIndex === 0) {
+                                        // Title Count (Orange): place below the dot, or to the right on the first point (Aug26)
+                                        return context.dataIndex === 0 ? 'right' : 'bottom';
+                                    }
+                                    // Avg. Aging Days (Blue): place cleanly above the dot
+                                    return 'top';
+                                },
+                                anchor: function(context) {
+                                    return context.datasetIndex === 0 ? 'center' : 'end';
+                                },
+                                offset: function(context) {
+                                    return context.datasetIndex === 0 ? 10 : 6;
+                                },
+                                backgroundColor: 'rgba(255, 255, 255, 0.85)',
+                                borderRadius: 4,
+                                padding: { top: 2, bottom: 2, left: 4, right: 4 },
+                                font: { weight: 'bold', size: 12 },
                                 color: function(context) {
-                                    // Orange for Title Count, Blue for Avg Aging Days
                                     return context.datasetIndex === 0 ? '#ea580c' : '#2563eb';
                                 }
                             }
