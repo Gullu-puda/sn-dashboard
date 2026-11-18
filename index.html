@@ -764,8 +764,15 @@
 
                 let stageCounts = {};
                 
-                // Keep track of Current TAT sum and count grouped by each book's current stage
-                let stageTatMetrics = {};
+                // Keep track of TAT sum and count for each critical stage
+                let stageTatMetrics = {
+                    'S200': { sum: 0, count: 0 },
+                    'S300A': { sum: 0, count: 0 },
+                    'S300': { sum: 0, count: 0 },
+                    'S600': { sum: 0, count: 0 },
+                    'S650A': { sum: 0, count: 0 },
+                    'S650': { sum: 0, count: 0 }
+                };
 
                 data.forEach(row => {
                     let cleanRow = {};
@@ -789,7 +796,7 @@
                     }
                     totalPages += Math.round(Number(pages) || 0);
 
-                    // Parse Current TAT for the Average Current TAT KPI and Stage Aging chart
+                    // Parse Current TAT for the Average Current TAT KPI
                     let rawTat = cleanRow['Current TAT (S50 onward)'];
                     if (rawTat === undefined || rawTat === null || String(rawTat).trim() === '') {
                         rawTat = cleanRow['Current TAT'];
@@ -803,14 +810,16 @@
                     // Increment the counter for this specific stage (for horizontal bar chart)
                     stageCounts[stage] = (stageCounts[stage] || 0) + 1;
 
-                    // Group Current TAT (S50 onward) by the book's current stage
-                    if (!stageTatMetrics[stage]) {
-                        stageTatMetrics[stage] = { sum: 0, count: 0 };
-                    }
-                    if (!isNaN(cTat)) {
-                        stageTatMetrics[stage].sum += cTat;
-                        stageTatMetrics[stage].count++;
-                    }
+                    // Parse TAT metrics for each stage dynamically for the vertical bar chart
+                    const stages = ['S200', 'S300A', 'S300', 'S600', 'S650A', 'S650'];
+                    stages.forEach(s => {
+                        // The column headers match the pattern: 'S200 TAT', 'S300A TAT', etc.
+                        let val = parseFloat(cleanRow[`${s} TAT`]);
+                        if (!isNaN(val)) {
+                            stageTatMetrics[s].sum += val;
+                            stageTatMetrics[s].count++;
+                        }
+                    });
                 });
 
                 // --- Calculate KPI Values ---
@@ -819,20 +828,11 @@
                 document.getElementById('kpi-status-pages').textContent = totalPages.toLocaleString(); // Commas for large numbers
                 document.getElementById('kpi-status-avgtat').innerHTML = `${avgCurrentTat} <span class="text-lg font-medium opacity-80">days</span>`;
 
-                // --- Chart 1: Average Work Aging by Stage (Vertical Bar) ---
-                const stageOrder = ['S5', 'S50', 'S100', 'S200', 'S300A', 'S300', 'S600', 'S650A', 'S650'];
-                let stageLabels = Object.keys(stageTatMetrics).sort((a, b) => {
-                    let idxA = stageOrder.indexOf(a);
-                    let idxB = stageOrder.indexOf(b);
-                    if (idxA === -1 && idxB === -1) return a.localeCompare(b);
-                    if (idxA === -1) return 1;
-                    if (idxB === -1) return -1;
-                    return idxA - idxB;
-                });
+                // --- Chart 1: Average TAT by Production Stage (Vertical Bar) ---
+                let stageLabels = ['S200', 'S300A', 'S300', 'S600', 'S650A', 'S650'];
                 let avgTatData = stageLabels.map(s => {
                     return stageTatMetrics[s].count > 0 ? Math.round(stageTatMetrics[s].sum / stageTatMetrics[s].count) : 0;
                 });
-                const stagePalette = ['#6366f1', '#8b5cf6', '#ec4899', '#f43f5e', '#f97316', '#eab308', '#14b8a6', '#3b82f6'];
 
                 if (charts['stageTatBarChart']) charts['stageTatBarChart'].destroy();
                 let stageTatBarChart = charts['stageTatBarChart'] = new Chart(document.getElementById('stageTatBarChart').getContext('2d'), {
@@ -840,9 +840,9 @@
                     data: {
                         labels: stageLabels,
                         datasets: [{
-                            label: 'Average Current TAT (Days)',
+                            label: 'Average TAT (Days)',
                             data: avgTatData,
-                            backgroundColor: stageLabels.map((_, i) => stagePalette[i % stagePalette.length]),
+                            backgroundColor: ['#6366f1', '#8b5cf6', '#ec4899', '#f43f5e', '#f97316', '#eab308'],
                             borderRadius: 4
                         }]
                     },
