@@ -764,22 +764,18 @@
 
                 let stageCounts = {};
                 
-                // Keep track of TAT sum and count for each critical stage
-                let stageTatMetrics = {
-                    'S200': { sum: 0, count: 0 },
-                    'S300A': { sum: 0, count: 0 },
-                    'S300': { sum: 0, count: 0 },
-                    'S600': { sum: 0, count: 0 },
-                    'S650A': { sum: 0, count: 0 },
-                    'S650': { sum: 0, count: 0 }
-                };
+                // Keep track of Current TAT sum and count grouped by each book's current stage
+                let stageTatMetrics = {};
 
                 data.forEach(row => {
                     let cleanRow = {};
                     // Cleans up extra spaces in headers to ensure exact matching
                     for(let key in row) cleanRow[key.trim().replace(/\s+/g, ' ')] = row[key];
 
-                    let stage = cleanRow['Stage'] || cleanRow['Current Stage'] || 'Unknown';
+                    let stage = String(cleanRow['Stage'] || cleanRow['Current Stage'] || 'Unknown').trim();
+                    if (!stage || stage.toLowerCase() === 'nan' || stage.toLowerCase() === 'none') {
+                        stage = 'Unknown';
+                    }
                     
                     // Look for the pages column specifically (checking TS Pages, MS Pages, Pages, etc.)
                     let pages = cleanRow['TS Pages'] || cleanRow['MS Pages'] || cleanRow['TS PAGES'] || cleanRow['MS PAGES'] || cleanRow['Pages'] || cleanRow['TS pages'] || cleanRow['MS pages'] || cleanRow['Estimated TS Pages'] || row['TS Pages'] || row['MS Pages'] || 0;
@@ -793,8 +789,12 @@
                     }
                     totalPages += Math.round(Number(pages) || 0);
 
-                    // Parse Current TAT for the Average Current TAT KPI
-                    let cTat = parseFloat(cleanRow['Current TAT (S50 onward)'] || cleanRow['Current TAT']);
+                    // Parse Current TAT for the Average Current TAT KPI and Stage Aging chart
+                    let rawTat = cleanRow['Current TAT (S50 onward)'];
+                    if (rawTat === undefined || rawTat === null || String(rawTat).trim() === '') {
+                        rawTat = cleanRow['Current TAT'];
+                    }
+                    let cTat = (rawTat !== undefined && rawTat !== null && String(rawTat).trim() !== '' && String(rawTat).toLowerCase() !== 'nan') ? parseFloat(rawTat) : NaN;
                     if (!isNaN(cTat)) {
                         currentTatSum += cTat;
                         currentTatCount++;
@@ -803,16 +803,14 @@
                     // Increment the counter for this specific stage (for horizontal bar chart)
                     stageCounts[stage] = (stageCounts[stage] || 0) + 1;
 
-                    // Parse TAT metrics for each stage dynamically for the vertical bar chart
-                    const stages = ['S200', 'S300A', 'S300', 'S600', 'S650A', 'S650'];
-                    stages.forEach(s => {
-                        // The column headers match the pattern: 'S200 TAT', 'S300A TAT', etc.
-                        let val = parseFloat(cleanRow[`${s} TAT`]);
-                        if (!isNaN(val)) {
-                            stageTatMetrics[s].sum += val;
-                            stageTatMetrics[s].count++;
-                        }
-                    });
+                    // Group Current TAT (S50 onward) by the book's current stage
+                    if (!stageTatMetrics[stage]) {
+                        stageTatMetrics[stage] = { sum: 0, count: 0 };
+                    }
+                    if (!isNaN(cTat)) {
+                        stageTatMetrics[stage].sum += cTat;
+                        stageTatMetrics[stage].count++;
+                    }
                 });
 
                 // --- Calculate KPI Values ---
@@ -821,21 +819,30 @@
                 document.getElementById('kpi-status-pages').textContent = totalPages.toLocaleString(); // Commas for large numbers
                 document.getElementById('kpi-status-avgtat').innerHTML = `${avgCurrentTat} <span class="text-lg font-medium opacity-80">days</span>`;
 
-                // --- Chart 1: Average TAT by Production Stage (Vertical Bar) ---
-                let stageLabels = ['S200', 'S300A', 'S300', 'S600', 'S650A', 'S650'];
+                // --- Chart 1: Average Work Aging by Stage (Vertical Bar) ---
+                const stageOrder = ['S5', 'S50', 'S100', 'S200', 'S300A', 'S300', 'S600', 'S650A', 'S650'];
+                let stageLabels = Object.keys(stageTatMetrics).sort((a, b) => {
+                    let idxA = stageOrder.indexOf(a);
+                    let idxB = stageOrder.indexOf(b);
+                    if (idxA === -1 && idxB === -1) return a.localeCompare(b);
+                    if (idxA === -1) return 1;
+                    if (idxB === -1) return -1;
+                    return idxA - idxB;
+                });
                 let avgTatData = stageLabels.map(s => {
                     return stageTatMetrics[s].count > 0 ? Math.round(stageTatMetrics[s].sum / stageTatMetrics[s].count) : 0;
                 });
+                const stagePalette = ['#6366f1', '#8b5cf6', '#ec4899', '#f43f5e', '#f97316', '#eab308', '#14b8a6', '#3b82f6'];
 
                 if (charts['stageTatBarChart']) charts['stageTatBarChart'].destroy();
-                charts['stageTatBarChart'] = new Chart(document.getElementById('stageTatBarChart').getContext('2d'), {
+                let stageTatBarChart = charts['stageTatBarChart'] = new Chart(document.getElementById('stageTatBarChart').getContext('2d'), {
                     type: 'bar',
                     data: {
                         labels: stageLabels,
                         datasets: [{
-                            label: 'Average TAT (Days)',
+                            label: 'Average Current TAT (Days)',
                             data: avgTatData,
-                            backgroundColor: ['#6366f1', '#8b5cf6', '#ec4899', '#f43f5e', '#f97316', '#eab308'],
+                            backgroundColor: stageLabels.map((_, i) => stagePalette[i % stagePalette.length]),
                             borderRadius: 4
                         }]
                     },
@@ -843,6 +850,18 @@
                         responsive: true, 
                         maintainAspectRatio: false, 
                         layout: { padding: { top: 30 } },
+                        onHover: (event, chartElement) => {
+                            event.native.target.style.cursor = chartElement[0] ? 'pointer' : 'default';
+                        },
+                        onClick: (event, activeElements) => {
+                            if (activeElements.length > 0) {
+                                const clickedIndex = activeElements[0].index;
+                                const clickedStage = stageTatBarChart.data.labels[clickedIndex];
+                                renderWIPTable(clickedStage); // Filter table by clicked stage
+                            } else {
+                                renderWIPTable(null); // Reset table if empty space is clicked
+                            }
+                        },
                         plugins: { 
                             legend: { display: false },
                             datalabels: {
@@ -917,8 +936,13 @@
             
             if (filterStage) {
                 displayData = globalWipData.filter(row => {
-                    const stage = row['Stage'] || row['Current Stage'] || '';
-                    return stage.trim() === filterStage.trim();
+                    let cleanRow = {};
+                    for (let key in row) cleanRow[key.trim().replace(/\s+/g, ' ')] = row[key];
+                    let stage = String(cleanRow['Stage'] || cleanRow['Current Stage'] || 'Unknown').trim();
+                    if (!stage || stage.toLowerCase() === 'nan' || stage.toLowerCase() === 'none') {
+                        stage = 'Unknown';
+                    }
+                    return stage === filterStage.trim();
                 });
                 // Add the specific Stage TAT header
                 extraColHeader = `<th class="py-3 px-6 text-center bg-indigo-50 text-indigo-700 rounded-tr-lg">${filterStage} TAT</th>`;
