@@ -810,16 +810,20 @@
                     // Increment the counter for this specific stage (for horizontal bar chart)
                     stageCounts[stage] = (stageCounts[stage] || 0) + 1;
 
-                    // Parse TAT metrics for each stage dynamically for the vertical bar chart
-                    const stages = ['S200', 'S300A', 'S300', 'S600', 'S650A', 'S650'];
-                    stages.forEach(s => {
-                        // The column headers match the pattern: 'S200 TAT', 'S300A TAT', etc.
-                        let val = parseFloat(cleanRow[`${s} TAT`]);
-                        if (!isNaN(val)) {
-                            stageTatMetrics[s].sum += val;
-                            stageTatMetrics[s].count++;
+                    // Accumulate stage-specific TAT only for books currently sitting in that stage
+                    if (stageTatMetrics[stage]) {
+                        let rawStageTat = cleanRow[`${stage} TAT`];
+                        if (rawStageTat !== undefined && rawStageTat !== null) {
+                            let strVal = String(rawStageTat).trim().toLowerCase();
+                            if (strVal !== '' && strVal !== 'nan' && strVal !== 'none' && strVal !== 'null') {
+                                let val = parseFloat(strVal);
+                                if (!isNaN(val)) {
+                                    stageTatMetrics[stage].sum += val;
+                                    stageTatMetrics[stage].count++;
+                                }
+                            }
                         }
-                    });
+                    }
                 });
 
                 // --- Calculate KPI Values ---
