@@ -53,8 +53,15 @@
                 <tbody class="bg-[#9CB770]"> <!-- Custom olive/green color -->
                   <tr>
                     <td class="border-2 border-black p-4 px-6 text-gray-800">
+                      <span>Total Titles in S5 Stage</span>
+                    </td>
+                    <td class="border-2 border-black p-4 px-8 text-center text-gray-800" id="summary-s5-titles">-</td>
+                    <td class="border-2 border-black p-4 px-8 text-center font-medium text-gray-700" id="summary-s5-aging">-</td>
+                  </tr>
+                  <tr>
+                    <td class="border-2 border-black p-4 px-6 text-gray-800">
                       <div class="flex justify-between items-center">
-                        <span>Total No of Titles in WIP</span>
+                        <span>Total No of Titles in WIP (S50-S650)</span>
                         <button onclick="switchTab('status')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-1.5 rounded-lg shadow transition-colors flex items-center gap-2">
                           View <span aria-hidden="true">&rarr;</span>
                         </button>
@@ -394,36 +401,15 @@
                 const wipData = await wipRes.json();
                 let delData = await delRes.json();
 
-                delData = delData.filter(row => {
-                    let bookId = row['Book ID'];
-                    let dDate = row['Delivered Date '] || row['Delivered Date'] || row['Delivery Date'];
-                    let isValidBookId = bookId && String(bookId).trim() !== '' && String(bookId).toLowerCase() !== 'nan';
-                    let isValidDate = dDate && String(dDate).trim() !== '' && String(dDate).toLowerCase() !== 'nan' && String(dDate).toLowerCase() !== 'nat';
-                    return isValidBookId && isValidDate;
+                // 1. Delivered titles & aging (original calculation without restrictive filtering)
+                const validDelRows = delData.filter(row => {
+                    return Object.values(row).some(v => v !== undefined && v !== null && String(v).trim() !== '' && String(v).toLowerCase() !== 'nan');
                 });
-
-                // 1. Calculate WIP numbers
-                const wipTitles = wipData.length;
-                let wipAgingSum = 0;
-                let wipAgingCount = 0;
-
-                wipData.forEach(row => {
-                    let cleanRow = {};
-                    for (let key in row) cleanRow[key.trim().replace(/\s+/g, ' ')] = row[key];
-                    let aging = parseFloat(cleanRow['Current TAT (S50 onward)'] ?? cleanRow['Current TAT'] ?? cleanRow['Total TAT'] ?? cleanRow['Aging']);
-                    if (!isNaN(aging)) {
-                        wipAgingSum += aging;
-                        wipAgingCount++;
-                    }
-                });
-                const wipAging = wipAgingCount > 0 ? Math.round(wipAgingSum / wipAgingCount) : 0;
-
-                // 2. Calculate Delivered numbers
-                const delTitles = delData.length;
+                const delTitles = validDelRows.length;
                 let delAgingSum = 0;
                 let delAgingCount = 0;
 
-                delData.forEach(row => {
+                validDelRows.forEach(row => {
                     let cleanRow = {};
                     for (let key in row) cleanRow[key.trim().replace(/\s+/g, ' ')] = row[key];
                     let aging = parseFloat(cleanRow['Total Avg. Aging Days'] ?? cleanRow['Current TAT (S50 onward)'] ?? cleanRow['Total Avg. Aging'] ?? cleanRow['Aging']);
@@ -434,7 +420,58 @@
                 });
                 const delAging = delAgingCount > 0 ? Math.round(delAgingSum / delAgingCount) : 0;
 
+                // 2. WIP calculations: count total WIP, S5 titles, and S50-S650 (totalWip - S5)
+                const validWipRows = wipData.filter(row => {
+                    return Object.values(row).some(v => v !== undefined && v !== null && String(v).trim() !== '' && String(v).toLowerCase() !== 'nan');
+                });
+                const totalWipCount = validWipRows.length;
+
+                // S5 stage rows
+                const s5Rows = validWipRows.filter(row => {
+                    let cleanRow = {};
+                    for (let key in row) cleanRow[key.trim().replace(/\s+/g, ' ')] = row[key];
+                    let stage = String(cleanRow['Stage'] || cleanRow['Current Stage'] || '').trim().toUpperCase();
+                    return stage === 'S5';
+                });
+                const s5Titles = s5Rows.length;
+
+                // Total No of Titles in WIP (S50-S650) = total WIP count minus S5 count
+                const wipTitles = Math.max(0, totalWipCount - s5Titles);
+
+                // S5 aging calculation
+                let s5AgingSum = 0;
+                let s5AgingCount = 0;
+                s5Rows.forEach(cleanRow => {
+                    let aging = parseFloat(cleanRow['Current TAT (S50 onward)'] ?? cleanRow['Current TAT'] ?? cleanRow['Total TAT'] ?? cleanRow['Aging']);
+                    if (!isNaN(aging)) {
+                        s5AgingSum += aging;
+                        s5AgingCount++;
+                    }
+                });
+                const s5Aging = s5AgingCount > 0 ? Math.round(s5AgingSum / s5AgingCount) : 0;
+
+                // WIP (S50-S650) aging calculation: across all non-S5 WIP rows
+                const wipS50ToS650Rows = validWipRows.filter(row => {
+                    let cleanRow = {};
+                    for (let key in row) cleanRow[key.trim().replace(/\s+/g, ' ')] = row[key];
+                    let stage = String(cleanRow['Stage'] || cleanRow['Current Stage'] || '').trim().toUpperCase();
+                    return stage !== 'S5';
+                });
+
+                let wipAgingSum = 0;
+                let wipAgingCount = 0;
+                wipS50ToS650Rows.forEach(cleanRow => {
+                    let aging = parseFloat(cleanRow['Current TAT (S50 onward)'] ?? cleanRow['Current TAT'] ?? cleanRow['Total TAT'] ?? cleanRow['Aging']);
+                    if (!isNaN(aging)) {
+                        wipAgingSum += aging;
+                        wipAgingCount++;
+                    }
+                });
+                const wipAging = wipAgingCount > 0 ? Math.round(wipAgingSum / wipAgingCount) : 0;
+
                 // Inject into HTML elements
+                document.getElementById('summary-s5-titles').textContent = s5Titles;
+                document.getElementById('summary-s5-aging').textContent = s5Aging;
                 document.getElementById('summary-wip-titles').textContent = wipTitles;
                 document.getElementById('summary-wip-aging').textContent = wipAging;
                 document.getElementById('summary-del-titles').textContent = delTitles;
@@ -733,7 +770,7 @@
                         responsive: true,
                         maintainAspectRatio: false,
                         layout: {
-                            padding: { top: 25, right: 25, bottom: 10, left: 15 }
+                            padding: { top: 35, right: 28, bottom: 12, left: 18 }
                         },
                         onHover: (event, chartElement) => {
                             event.native.target.style.cursor = chartElement[0] ? 'pointer' : 'default';
@@ -753,7 +790,7 @@
                                 display: true,
                                 position: 'left',
                                 beginAtZero: true,
-                                grace: '20%',
+                                grace: '30%',
                                 title: { display: true, text: 'Title Count', color: '#f97316', font: { weight: 'bold' } }
                             },
                             y1: {
@@ -761,7 +798,7 @@
                                 display: true,
                                 position: 'right',
                                 beginAtZero: true,
-                                grace: '20%',
+                                grace: '25%',
                                 grid: { drawOnChartArea: false }, // Prevent gridline overlap
                                 title: { display: true, text: 'Avg Aging Days', color: '#3b82f6', font: { weight: 'bold' } }
                             }
@@ -777,36 +814,32 @@
                                         // Title Count (Orange): place below the dot, or to the right on the first point (Aug26)
                                         return context.dataIndex === 0 ? 'right' : 'bottom';
                                     } else if (context.datasetIndex === 2) {
-                                        // Inflow (Received S50 - Emerald): place above the dot
-                                        return 'top';
+                                        // Inflow (Received S50 - Emerald): top on first point, below on subsequent points so it stays well clear of the blue line
+                                        return context.dataIndex === 0 ? 'top' : 'bottom';
                                     }
                                     // Avg. Aging Days (Blue): place cleanly above the dot
                                     return 'top';
                                 },
                                 anchor: function(context) {
-                                    if (context.datasetIndex === 0) {
+                                    if (context.datasetIndex === 0 || context.datasetIndex === 2) {
                                         return 'center';
-                                    } else if (context.datasetIndex === 2) {
-                                        return 'end';
                                     }
                                     return 'end';
                                 },
                                 offset: function(context) {
-                                    if (context.datasetIndex === 0) {
+                                    if (context.datasetIndex === 0 || context.datasetIndex === 2) {
                                         return 10;
-                                    } else if (context.datasetIndex === 2) {
-                                        return 6;
                                     }
                                     return 6;
                                 },
-                                backgroundColor: 'rgba(255, 255, 255, 0.85)',
+                                backgroundColor: 'rgba(255, 255, 255, 0.95)',
                                 borderRadius: 4,
-                                padding: { top: 2, bottom: 2, left: 4, right: 4 },
+                                padding: { top: 2, bottom: 2, left: 5, right: 5 },
                                 font: { weight: 'bold', size: 12 },
                                 color: function(context) {
                                     if (context.datasetIndex === 0) return '#ea580c';
                                     if (context.datasetIndex === 1) return '#2563eb';
-                                    return '#059669';
+                                    return '#047857';
                                 }
                             }
                         }
