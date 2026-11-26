@@ -641,6 +641,27 @@
                     }
                 });
 
+                let chartInflowCount = [];
+
+                // Match the months and calculate the received title count (Inflow S50) from the main Delivered data
+                chartLabels.forEach(monthLabel => {
+                    let matchingRows = data.filter(row => {
+                        let cleanRow = {};
+                        for (let k in row) cleanRow[k.trim()] = row[k];
+                        let rDate = cleanRow['Received Date (S50)'] || cleanRow['Received Date'] || row['Received Date (S50)'] || row['Received Date'] || '';
+                        if (!rDate) return false;
+                        let parsed = new Date(rDate);
+                        if (isNaN(parsed.getTime())) return false;
+
+                        let shortMonth = parsed.toLocaleString('en-US', { month: 'short' });
+                        if (shortMonth === 'Jul') shortMonth = 'July';
+                        let shortYear = parsed.getFullYear().toString().slice(-2);
+                        return (shortMonth + shortYear) === monthLabel;
+                    });
+
+                    chartInflowCount.push(matchingRows.length);
+                });
+
                 if (charts['deliveredPieChart']) charts['deliveredPieChart'].destroy();
                 const ctx = document.getElementById('deliveredPieChart').getContext('2d');
                 let deliveredPieChart;
@@ -670,6 +691,17 @@
                                 pointRadius: 6,
                                 pointHoverRadius: 8,
                                 yAxisID: 'y1'
+                            },
+                            {
+                                label: 'Inflow (Received S50)',
+                                data: chartInflowCount,
+                                borderColor: '#10b981', // Emerald / Green
+                                backgroundColor: '#10b981',
+                                tension: 0.3,
+                                borderWidth: 3,
+                                pointRadius: 6,
+                                pointHoverRadius: 8,
+                                yAxisID: 'y'
                             }
                         ]
                     },
@@ -720,22 +752,37 @@
                                     if (context.datasetIndex === 0) {
                                         // Title Count (Orange): place below the dot, or to the right on the first point (Aug26)
                                         return context.dataIndex === 0 ? 'right' : 'bottom';
+                                    } else if (context.datasetIndex === 2) {
+                                        // Inflow (Received S50 - Emerald): place above the dot
+                                        return 'top';
                                     }
                                     // Avg. Aging Days (Blue): place cleanly above the dot
                                     return 'top';
                                 },
                                 anchor: function(context) {
-                                    return context.datasetIndex === 0 ? 'center' : 'end';
+                                    if (context.datasetIndex === 0) {
+                                        return 'center';
+                                    } else if (context.datasetIndex === 2) {
+                                        return 'end';
+                                    }
+                                    return 'end';
                                 },
                                 offset: function(context) {
-                                    return context.datasetIndex === 0 ? 10 : 6;
+                                    if (context.datasetIndex === 0) {
+                                        return 10;
+                                    } else if (context.datasetIndex === 2) {
+                                        return 6;
+                                    }
+                                    return 6;
                                 },
                                 backgroundColor: 'rgba(255, 255, 255, 0.85)',
                                 borderRadius: 4,
                                 padding: { top: 2, bottom: 2, left: 4, right: 4 },
                                 font: { weight: 'bold', size: 12 },
                                 color: function(context) {
-                                    return context.datasetIndex === 0 ? '#ea580c' : '#2563eb';
+                                    if (context.datasetIndex === 0) return '#ea580c';
+                                    if (context.datasetIndex === 1) return '#2563eb';
+                                    return '#059669';
                                 }
                             }
                         }
