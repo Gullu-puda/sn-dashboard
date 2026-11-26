@@ -446,9 +446,13 @@
         // --- Fetch Delivered Data ---
         async function fetchDeliveredData() {
             try {
-                const response = await fetch('/api/data?sheet=Delivered');
-                if (!response.ok) throw new Error("API Connection Failed");
-                let data = await response.json();
+                const [delResponse, wipResponse] = await Promise.all([
+                    fetch('/api/data?sheet=' + encodeURIComponent('Delivered')),
+                    fetch('/api/data?sheet=' + encodeURIComponent('Current Status'))
+                ]);
+                if (!delResponse.ok || !wipResponse.ok) throw new Error("API Connection Failed");
+                let data = await delResponse.json();
+                let wipData = await wipResponse.json();
 
                 // Filter out empty rows (e.g., rows where Book ID or Delivered Date is null, empty, or 'NaN')
                 data = data.filter(row => {
@@ -462,7 +466,13 @@
                     return isValidBookId && isValidDate;
                 });
 
-                // Update global data for the table filtering to also use this cleaned data
+                // Filter valid rows from Current Status (WIP) strictly for separate Inflow calculation
+                let validWipData = wipData.filter(row => {
+                    let bookId = row['Book ID'];
+                    return bookId && String(bookId).trim() !== '' && String(bookId).toLowerCase() !== 'nan';
+                });
+
+                // Update global data for the table filtering to strictly use pure Delivered data
                 globalDeliveredData = data;
 
                 let totalTatSum = 0;
@@ -643,9 +653,9 @@
 
                 let chartInflowCount = [];
 
-                // Match the months and calculate the received title count (Inflow S50) from the main Delivered data
+                // Calculate received title count (Inflow S50) combining Delivered sheet + Current Status sheet separately
                 chartLabels.forEach(monthLabel => {
-                    let matchingRows = data.filter(row => {
+                    let delReceivedCount = data.filter(row => {
                         let cleanRow = {};
                         for (let k in row) cleanRow[k.trim()] = row[k];
                         let rDate = cleanRow['Received Date (S50)'] || cleanRow['Received Date'] || row['Received Date (S50)'] || row['Received Date'] || '';
@@ -657,9 +667,23 @@
                         if (shortMonth === 'Jul') shortMonth = 'July';
                         let shortYear = parsed.getFullYear().toString().slice(-2);
                         return (shortMonth + shortYear) === monthLabel;
-                    });
+                    }).length;
 
-                    chartInflowCount.push(matchingRows.length);
+                    let wipReceivedCount = validWipData.filter(row => {
+                        let cleanRow = {};
+                        for (let k in row) cleanRow[k.trim()] = row[k];
+                        let rDate = cleanRow['Received Date (S50)'] || cleanRow['Received Date'] || row['Received Date (S50)'] || row['Received Date'] || '';
+                        if (!rDate) return false;
+                        let parsed = new Date(rDate);
+                        if (isNaN(parsed.getTime())) return false;
+
+                        let shortMonth = parsed.toLocaleString('en-US', { month: 'short' });
+                        if (shortMonth === 'Jul') shortMonth = 'July';
+                        let shortYear = parsed.getFullYear().toString().slice(-2);
+                        return (shortMonth + shortYear) === monthLabel;
+                    }).length;
+
+                    chartInflowCount.push(delReceivedCount + wipReceivedCount);
                 });
 
                 if (charts['deliveredPieChart']) charts['deliveredPieChart'].destroy();
