@@ -770,7 +770,7 @@
                         responsive: true,
                         maintainAspectRatio: false,
                         layout: {
-                            padding: { top: 35, right: 28, bottom: 12, left: 18 }
+                            padding: { top: 35, right: 32, bottom: 15, left: 20 }
                         },
                         onHover: (event, chartElement) => {
                             event.native.target.style.cursor = chartElement[0] ? 'pointer' : 'default';
@@ -790,6 +790,7 @@
                                 display: true,
                                 position: 'left',
                                 beginAtZero: true,
+                                suggestedMax: 45,
                                 grace: '30%',
                                 title: { display: true, text: 'Title Count', color: '#f97316', font: { weight: 'bold' } }
                             },
@@ -798,6 +799,7 @@
                                 display: true,
                                 position: 'right',
                                 beginAtZero: true,
+                                suggestedMax: 85,
                                 grace: '25%',
                                 grid: { drawOnChartArea: false }, // Prevent gridline overlap
                                 title: { display: true, text: 'Avg Aging Days', color: '#3b82f6', font: { weight: 'bold' } }
@@ -809,6 +811,7 @@
                                 position: 'top'
                             },
                             datalabels: {
+                                clip: false,
                                 align: function(context) {
                                     if (context.datasetIndex === 0) {
                                         // Title Count (Orange): place below the dot, or to the right on the first point (Aug26)
@@ -827,7 +830,9 @@
                                     return 'end';
                                 },
                                 offset: function(context) {
-                                    if (context.datasetIndex === 0 || context.datasetIndex === 2) {
+                                    if (context.datasetIndex === 2) {
+                                        return 14;
+                                    } else if (context.datasetIndex === 0) {
                                         return 10;
                                     }
                                     return 6;
@@ -859,7 +864,17 @@
             try {
                 const response = await fetch('/api/data?sheet=' + encodeURIComponent('Current Status'));
                 if (!response.ok) throw new Error("API Connection Failed");
-                const data = await response.json();
+                const rawWipData = await response.json();
+
+                // Exclude S5 stage so WIP tab strictly covers S50 through S650 (matching the Summary tab)
+                const data = rawWipData.filter(row => {
+                    let cleanRow = {};
+                    for (let key in row) cleanRow[key.trim().replace(/\s+/g, ' ')] = row[key];
+                    let bookId = cleanRow['Book ID'] || row['Book ID'];
+                    let isValidBookId = bookId && String(bookId).trim() !== '' && String(bookId).toLowerCase() !== 'nan';
+                    let stage = String(cleanRow['Stage'] || cleanRow['Current Stage'] || row['Stage'] || row['Current Stage'] || '').trim().toUpperCase();
+                    return isValidBookId && stage !== 'S5';
+                });
                 globalWipData = data;
 
                 let totalPages = 0;
